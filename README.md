@@ -1,6 +1,6 @@
-# MedSpec AI
+# CareBlueprint AI
 
-MedSpec AI is a local healthcare requirements assistant for synthetic and anonymised project briefs. It uses LM Studio, retrieval augmented generation, and a two agent workflow to produce traceable software requirements and justified SDLC recommendations for Indian healthcare projects.
+CareBlueprint AI is a local healthcare requirements assistant for synthetic and anonymised project briefs. It uses LM Studio, retrieval augmented generation, and a two agent workflow to produce traceable software requirements and justified SDLC recommendations for Indian healthcare projects.
 
 ## Capabilities
 
@@ -10,7 +10,7 @@ Its knowledge base includes Indian healthcare and digital health sources such as
 
 ## Scope
 
-MedSpec AI is a requirements engineering prototype. It does not provide diagnosis, treatment, triage, medical advice, legal conclusions, or production approval. Use synthetic or anonymised data only. Regulatory and high impact decisions require authorised human review.
+CareBlueprint AI is a requirements engineering prototype. It does not provide diagnosis, treatment, triage, medical advice, legal conclusions, or production approval. Use synthetic or anonymised data only. Regulatory and high impact decisions require authorised human review.
 
 ## Requirements
 
@@ -27,7 +27,7 @@ npm run check
 npm run app
 ```
 
-Open `http://127.0.0.1:4173` for the custom MedSpec AI interface. Submit a synthetic healthcare project brief and review the requirements and SDLC output. Results are saved under `artifacts/evaluation/`. Use `npm run dev` separately when you need the standard Mastra Studio for inspecting agents, traces, and workflows.
+Open `http://127.0.0.1:4173` for the custom CareBlueprint AI interface. Submit a synthetic healthcare project brief and review the requirements and SDLC output. Results are saved under `artifacts/evaluation/`. Use `npm run dev` separately when you need the standard Mastra Studio for inspecting agents, traces, and workflows.
 
 ## Configuration
 
