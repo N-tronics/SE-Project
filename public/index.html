@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0f172a" />
+  <title>CareBlueprint AI | Healthcare Requirements Studio</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="navbar">
+    <div class="navbar-inner">
+      <div class="brand">
+        <span class="brand-mark">CB</span>
+        <div class="brand-text">
+          <span>CareBlueprint <b>AI</b></span>
+          <span class="brand-sub">Healthcare Systems Studio</span>
+        </div>
+      </div>
+      <nav class="nav-links">
+        <a class="nav-link active" href="#workspace">Studio</a>
+        <a class="nav-link" href="#pipeline">Pipeline</a>
+      </nav>
+      <div class="status-pill" id="status-pill">
+        <span class="status-dot"></span>
+        <span id="status-label">Local LM Studio</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" id="workspace">
+    <section class="hero">
+      <div class="hero-badge">INDIA · SYNTHETIC DATA ONLY · LOCAL WORKFLOW</div>
+      <h1>Architect healthcare requirements with traceable precision.</h1>
+      <p class="hero-copy">
+        Describe your clinical product, user roles, workflows, and regulatory constraints. CareBlueprint AI retrieves local corpus evidence, structures verifiable requirements, and recommends an appropriate SDLC.
+      </p>
+      <div class="hero-notice">
+        <span class="notice-badge">Review Notice</span>
+        <span>Generated outputs are for engineering review only. Clinical, privacy, security, and regulatory sign-off remain with authorised personnel.</span>
+      </div>
+    </section>
+
+    <section class="pipeline-bar" id="pipeline">
+      <div class="pipeline-step">
+        <span class="step-num">01</span>
+        <div>
+          <strong>Retrieve Evidence</strong>
+          <p>BM25 search across local healthcare corpus</p>
+        </div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step">
+        <span class="step-num">02</span>
+        <div>
+          <strong>Structure Requirements</strong>
+          <p>Map journeys, controls, risks, and gaps</p>
+        </div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step">
+        <span class="step-num">03</span>
+        <div>
+          <strong>Select SDLC</strong>
+          <p>Match delivery lifecycle to project risk</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="composer-card">
+      <div class="composer-header">
+        <div>
+          <span class="section-tag">PROJECT BRIEF</span>
+          <h2>What are you building?</h2>
+        </div>
+        <div class="composer-controls">
+          <div class="mode-switch" role="group" aria-label="Model provider">
+            <button type="button" class="mode-btn active" data-mode="local">Local LM Studio</button>
+            <button type="button" class="mode-btn" data-mode="gemini">Gemini API</button>
+          </div>
+          <div class="char-badge"><span id="char-count">0</span> chars</div>
+        </div>
+      </div>
+      <textarea
+        id="prompt"
+        placeholder="Example: Build a patient portal for a fictional Indian hospital with appointments, synthetic lab reports, consent management, clinician access, audit logs, and ABDM aligned exchange."
+      ></textarea>
+      <div class="composer-footer">
+        <div class="composer-hints">
+          <span class="hint-chip">Use fictional or anonymised data</span>
+          <span class="hint-chip">Ctrl/⌘ + Enter to run</span>
+        </div>
+        <button class="primary-button" id="generate-button">
+          <span>Generate Blueprint</span>
+          <span class="btn-arrow">→</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="loading-section hidden" id="loading-section">
+      <div class="loader"></div>
+      <div>
+        <strong id="loading-title">Retrieving healthcare evidence</strong>
+        <p id="loading-detail" class="muted">The local workflow is preparing your analysis. This can take a few minutes on a local model.</p>
+      </div>
+    </section>
+
+    <div class="error-banner hidden" id="error-banner"></div>
+
+    <section class="result-section hidden" id="result-section">
+      <div class="result-header">
+        <div>
+          <span class="section-tag">ANALYSIS OUTPUT</span>
+          <h2>Blueprint Ready</h2>
+        </div>
+        <div class="result-actions">
+          <button class="secondary-button" id="download-button">Download Markdown</button>
+          <button class="secondary-button" id="new-button">New Brief</button>
+        </div>
+      </div>
+      <div class="result-tabs">
+        <button class="tab active" data-tab="document">Complete Document</button>
+        <button class="tab" data-tab="requirements">Requirements</button>
+        <button class="tab" data-tab="sdlc">SDLC Recommendation</button>
+      </div>
+      <article class="result-card" id="result-content"></article>
+    </section>
+
+    <footer class="footer">
+      CareBlueprint AI <span>·</span> Local Requirements Engineering Studio <span>·</span> Not medical or legal advice
+    </footer>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>
