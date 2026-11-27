@@ -9,14 +9,36 @@ import { workspaceRoot } from './workspace';
 
 const previewDir = join(workspaceRoot, 'artifacts/evaluation');
 
+const withGroqRetry = async <T>(fn: () => Promise<T>, enabled: boolean): Promise<T> => {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      if (!enabled || attempt === 2 || !/rate limit|429|too many requests|tokens per minute/i.test(msg)) throw err;
+      const match = msg.match(/try again in ([\d.]+)s/i);
+      const waitMs = match ? Math.ceil(Number(match[1]) * 1000) + 3500 : 25000;
+      await new Promise((r) => setTimeout(r, Math.min(waitMs, 65000)));
+    }
+  }
+  return fn();
+};
+
 const listRequirements = createStep({
   id: 'list-healthcare-requirements',
   description: 'Healthcare Requirements Agent structures the brief into traceable requirements.',
-  inputSchema: z.object({ prompt: z.string(), mode: z.enum(['local', 'gemini']).optional(), geminiApiKey: z.string().optional() }),
-  outputSchema: z.object({ requirements: z.string(), mode: z.enum(['local', 'gemini']).optional(), geminiApiKey: z.string().optional() }),
+  inputSchema: z.object({ prompt: z.string(), mode: z.enum(['local', 'gemini', 'openai', 'groq']).optional(), geminiApiKey: z.string().optional() }),
+  outputSchema: z.object({ requirements: z.string(), mode: z.enum(['local', 'gemini', 'openai', 'groq']).optional(), geminiApiKey: z.string().optional() }),
   execute: async ({ inputData }) => {
-    const model = getChatModel(inputData.mode ?? 'local', inputData.geminiApiKey);
-    const result = await requirementsAgent.generate(inputData.prompt, { model });
+    const isGroq = inputData.mode === 'groq';
+    const model = getChatModel(inputData.mode ?? 'local', inputData.geminiApiKey, isGroq ? 'qwen/qwen3.8-27b' : undefined);
+    const result = await withGroqRetry(
+      () => requirementsAgent.generate(
+        inputData.prompt,
+        isGroq ? { model, modelSettings: { maxOutputTokens: 900 } } : { model },
+      ),
+      isGroq,
+    );
     const requirements = textFromGenerateResult(result);
     if (!requirements) throw new Error(`Healthcare Requirements Agent returned no text. ${describeGenerationFailure(result)}`);
     return { requirements, mode: inputData.mode, geminiApiKey: inputData.geminiApiKey };
@@ -26,11 +48,21 @@ const listRequirements = createStep({
 const selectSdlc = createStep({
   id: 'select-healthcare-sdlc',
   description: 'Healthcare SDLC Selection Agent chooses and justifies a lifecycle for the SRS.',
-  inputSchema: z.object({ requirements: z.string(), mode: z.enum(['local', 'gemini']).optional(), geminiApiKey: z.string().optional() }),
+  inputSchema: z.object({ requirements: z.string(), mode: z.enum(['local', 'gemini', 'openai', 'groq']).optional(), geminiApiKey: z.string().optional() }),
   outputSchema: z.object({ requirements: z.string(), sdlc: z.string(), document: z.string() }),
   execute: async ({ inputData }) => {
-    const model = getChatModel(inputData.mode ?? 'local', inputData.geminiApiKey);
-    const result = await sdlcSelectionAgent.generate(`Select a suitable SDLC for this healthcare specification.\n\n${inputData.requirements}`, { model });
+    const isGroq = inputData.mode === 'groq';
+    const model = getChatModel(inputData.mode ?? 'local', inputData.geminiApiKey, isGroq ? 'qwen/qwen3.8-27b' : undefined);
+    const reqForSdlc = isGroq && inputData.requirements.length > 4000
+      ? `${inputData.requirements.slice(0, 4000)}\n\n[Truncated for Groq rate limit]`
+      : inputData.requirements;
+    const result = await withGroqRetry(
+      () => sdlcSelectionAgent.generate(
+        `Select a suitable SDLC for this healthcare specification.\n\n${reqForSdlc}`,
+        isGroq ? { model, modelSettings: { maxOutputTokens: 900 } } : { model },
+      ),
+      isGroq,
+    );
     const sdlc = textFromGenerateResult(result);
     if (!sdlc) throw new Error(`Healthcare SDLC Selection Agent returned no text. ${describeGenerationFailure(result)}`);
     return { requirements: inputData.requirements, sdlc, document: `${inputData.requirements.trim()}\n\n---\n\n${sdlc.trim()}` };
@@ -61,7 +93,7 @@ const writePreview = createStep({
 export const requirementsThenSdlc = createWorkflow({
   id: 'requirements-then-sdlc',
   description: 'Healthcare workflow: structure a brief, select a justified SDLC, and write traceable Markdown and HTML previews.',
-  inputSchema: z.object({ prompt: z.string(), mode: z.enum(['local', 'gemini']).optional(), geminiApiKey: z.string().optional() }),
+  inputSchema: z.object({ prompt: z.string(), mode: z.enum(['local', 'gemini', 'openai', 'groq']).optional(), geminiApiKey: z.string().optional() }),
   outputSchema: z.object({ requirements: z.string(), sdlc: z.string(), document: z.string(), markdownPath: z.string(), htmlPath: z.string() }),
 }).then(listRequirements).then(selectSdlc).then(writePreview).commit();
 

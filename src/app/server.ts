@@ -44,7 +44,7 @@ const server = createServer(async (request, response) => {
     if (url.pathname === '/api/analyze' && request.method === 'POST') {
       const body = JSON.parse(await readBody(request)) as { prompt?: unknown; mode?: unknown; geminiApiKey?: unknown };
       const prompt = typeof body.prompt === 'string' ? body.prompt.trim() : '';
-      const mode = body.mode === 'gemini' ? 'gemini' : 'local';
+      const mode = body.mode === 'gemini' ? 'gemini' : body.mode === 'openai' ? 'openai' : body.mode === 'groq' ? 'groq' : 'local';
       const geminiApiKey = typeof body.geminiApiKey === 'string' ? body.geminiApiKey.trim() : undefined;
       if (prompt.length < 20) { sendJson(response, 400, { error: 'Please provide a healthcare project brief of at least 20 characters.' }); return; }
       const result = await runRequirementsThenSdlc(prompt, { mode, geminiApiKey });

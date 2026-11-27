@@ -19,4 +19,12 @@ export const config = {
     apiKey: value('GEMINI_API_KEY', ''),
     model: value('GEMINI_MODEL', 'gemini-3.8-flash'),
   },
+  openai: {
+    apiKey: value('OPENAI_API_KEY', ''),
+    model: value('OPENAI_MODEL', 'gpt-4o-mini'),
+  },
+  groq: {
+    apiKey: value('GROQ_API_KEY', ''),
+    model: value('GROQ_MODEL', 'qwen/qwen3.8-27b'),
+  },
 };

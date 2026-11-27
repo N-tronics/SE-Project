@@ -5,7 +5,7 @@ import { ragContextProcessor } from './rag';
 import { architectWorkspace } from './workspace';
 
 const options = {
-  modelSettings: { maxOutputTokens: 3500 },
+  modelSettings: { maxOutputTokens: 16384 },
   providerOptions: { lmStudio: { reasoningEffort: 'none', enable_thinking: false } },
 } as const;
 

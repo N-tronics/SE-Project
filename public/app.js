@@ -18,7 +18,7 @@ document.querySelectorAll('.mode-btn').forEach((btn) => btn.addEventListener('cl
   document.querySelectorAll('.mode-btn').forEach((b) => b.classList.remove('active'));
   btn.classList.add('active');
   modelMode = btn.dataset.mode;
-  statusLabel.textContent = modelMode === 'gemini' ? 'Gemini API' : 'Local LM Studio';
+  statusLabel.textContent = modelMode === 'gemini' ? 'Gemini API' : modelMode === 'openai' ? 'OpenAI API' : modelMode === 'groq' ? 'Groq API' : 'Local LM Studio';
 }));
 
 promptInput.addEventListener('input', () => { charCount.textContent = promptInput.value.length.toLocaleString(); });
